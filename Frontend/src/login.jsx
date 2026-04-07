@@ -22,8 +22,9 @@ export default function Login() {
             toast.success(isLogin ? "Welcome back!" : "Registration successful!");
 
             try {
-                await api.get('/admin/alerts');
-                navigate('/admin');
+                const meRes = await api.get('/auth/me');
+                const isAdmin = meRes.data?.role === 'ADMIN';
+                navigate(isAdmin ? '/admin' : '/dashboard');
             } catch {
                 navigate('/dashboard');
             }

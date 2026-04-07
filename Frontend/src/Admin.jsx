@@ -20,8 +20,12 @@ export default function Admin() {
 
             const statsRes = await api.get('/admin/statistics');
             setStats(statsRes.data);
-        } catch {
-            toast.error("Unauthorized! You are not an Admin.");
+        } catch (err) {
+            if (err.response?.status === 403) {
+                toast.error("Unauthorized! You are not an Admin.");
+            } else {
+                toast.error("Failed to load admin data. Please try again.");
+            }
             navigate('/dashboard');
         }
     };
@@ -113,7 +117,7 @@ export default function Admin() {
                                     <tr key={alert.id} className="border-b border-slate-50 hover:bg-slate-50 transition">
                                         <td className="p-4 text-red-600 font-bold">#{alert.id}</td>
                                         <td className="p-4 text-sm text-slate-500">{new Date(alert.createdAt).toLocaleString()}</td>
-                                        <td className="p-4 font-mono text-sm text-slate-600">TX-{alert.transaction.id}</td>
+                                        <td className="p-4 font-mono text-sm text-slate-600">TX-{alert.transactionId ?? alert.transaction?.id}</td>
                                         <td className="p-4">
                                             <span className="bg-red-100 text-red-700 px-3 py-1.5 rounded-lg text-xs font-bold border border-red-200">
                                                 {alert.reason}

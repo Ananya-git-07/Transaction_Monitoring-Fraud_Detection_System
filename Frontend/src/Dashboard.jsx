@@ -29,8 +29,13 @@ export default function Dashboard() {
     };
 
     const fetchHistory = async (accountId) => {
-        const res = await api.get(`/transaction/history/${accountId}`);
-        setHistory(res.data.sort((a, b) => b.id - a.id));
+        try {
+            const res = await api.get(`/transaction/history/${accountId}`);
+            setHistory(res.data.sort((a, b) => b.id - a.id));
+        } catch (err) {
+            toast.error(err.response?.data?.error || "Failed to load transaction history.");
+            setHistory([]);
+        }
     };
 
     const handleTransfer = async (e) => {
@@ -123,13 +128,13 @@ export default function Dashboard() {
                     </div>
 
                     {/* Right Column: Chart & History */}
-                    <div className="xl:col-span-2 space-y-6">
+                    <div className="xl:col-span-2 space-y-6 min-w-0">
                         {/* CHART PANEL */}
                         {account && history.length > 0 && (
                             <div className="bg-white rounded-2xl shadow-xs border border-slate-100 p-6">
                                 <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2"><BarChart3 className="w-5 h-5 text-indigo-500"/> Cash Flow (Last 7)</h3>
-                                <div className="h-64 w-full">
-                                    <ResponsiveContainer width="100%" height="100%">
+                                <div className="h-64 w-full min-w-0">
+                                    <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                                         <BarChart data={chartData}>
                                             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0"/>
                                             <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} dy={10}/>
